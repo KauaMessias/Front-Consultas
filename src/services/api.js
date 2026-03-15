@@ -1,10 +1,10 @@
 import axios from "axios";
 
 export const apiPublic = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.api_url,
 });
 export const apiPrivate = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.api_url,
 });
 
 apiPrivate.interceptors.request.use((config) => {
