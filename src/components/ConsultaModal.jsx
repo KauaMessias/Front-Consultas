@@ -3,7 +3,7 @@ import { apiPrivate } from "../services/api";
 
 import { IoCloseOutline } from "react-icons/io5";
 
-function ConsultaModal({ consulta, onClose }) {
+function ConsultaModal({ consulta, onClose, getConsultas }) {
   const [usuarioRelacionado, setUsuarioRelacionado] = useState({});
   const [endereco, setEndereco] = useState({});
   const isMedico = sessionStorage.getItem("role") === "[ROLE_MEDICO]";
@@ -42,6 +42,27 @@ function ConsultaModal({ consulta, onClose }) {
       default:
         return "";
     }
+  }
+
+  async function cancelarConsulta(consultaId) {
+    if (!window.confirm("Tem certeza de que deseja cancelar esta consulta?"))
+      return;
+
+    await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
+      params: {
+        status: "CANCELADA",
+      },
+    });
+  }
+
+  async function concluirConsulta(consultaId) {
+    if (!window.confirm("Tem certeza de que deseja concluir esta consulta?"))
+      return;
+    await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
+      params: {
+        status: "CONCLUIDA",
+      },
+    });
   }
 
   useEffect(() => {
@@ -195,10 +216,22 @@ function ConsultaModal({ consulta, onClose }) {
         </div>
         {consulta.status === "PENDENTE" && isMedico && (
           <div className="flex gap-16 text-neutral-100 p-4">
-            <button className="w-full text-md rounded-lg text-white font-bold bg-green-800 p-2 shadow-md hover:bg-green-900 hover:scale-110 ease-out transition-all duration-300">
+            <button
+              onClick={() => {
+                concluirConsulta(consulta.id);
+                getConsultas();
+              }}
+              className="w-full text-md rounded-lg text-white font-bold bg-green-800 p-2 shadow-md hover:bg-green-900 hover:scale-110 ease-out transition-all duration-300"
+            >
               Concluir
             </button>{" "}
-            <button className="w-full text-md rounded-lg text-white font-bold bg-red-900 p-2 shadow-md hover:bg-red-950 hover:scale-110 ease-out transition-all duration-300">
+            <button
+              onClick={() => {
+                cancelarConsulta(consulta.id);
+                getConsultas();
+              }}
+              className="w-full text-md rounded-lg text-white font-bold bg-red-900 p-2 shadow-md hover:bg-red-950 hover:scale-110 ease-out transition-all duration-300"
+            >
               Cancelar
             </button>
           </div>

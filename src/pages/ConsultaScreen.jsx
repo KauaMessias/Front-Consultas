@@ -87,6 +87,7 @@ function ConsultaScreen() {
         <ConsultaModal
           consulta={consultaSelecionada}
           onClose={() => setConsultaSelecionada(null)}
+          getConsultas={getConsultas}
         />
       )}
     </div>
