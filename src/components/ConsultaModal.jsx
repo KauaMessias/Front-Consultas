@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { apiPrivate } from "../services/api";
-
 import { IoCloseOutline } from "react-icons/io5";
+import { formatarCpf, formatarTelefone } from "../utils/formatters";
+import { toast } from "sonner";
 
 function ConsultaModal({ consulta, onClose, getConsultas }) {
   const [usuarioRelacionado, setUsuarioRelacionado] = useState({});
@@ -48,21 +49,31 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
     if (!window.confirm("Tem certeza de que deseja cancelar esta consulta?"))
       return;
 
-    await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
-      params: {
-        status: "CANCELADA",
-      },
-    });
+    try {
+      await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
+        params: {
+          status: "CANCELADA",
+        },
+      });
+      toast.success("Consulta cancelada com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao cancelar a consulta.");
+    }
   }
 
   async function concluirConsulta(consultaId) {
     if (!window.confirm("Tem certeza de que deseja concluir esta consulta?"))
       return;
-    await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
-      params: {
-        status: "CONCLUIDA",
-      },
-    });
+    try {
+      await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
+        params: {
+          status: "CONCLUIDA",
+        },
+      });
+      toast.success("Consulta concluida com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao concluir a consulta.");
+    }
   }
 
   useEffect(() => {
@@ -103,7 +114,7 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
             <span className="font-semibold text-sm text-neutral-400/80">
               DESCRIÇÃO
             </span>
-            <p>{consulta.descricao}</p>
+            <p>{consulta?.descricao || "carregando..."}</p>
           </div>
         </div>
       </div>
@@ -119,7 +130,9 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
             <span className="font-semibold text-sm text-neutral-400/80">
               NOME
             </span>
-            <p className="flex font-semibold">{usuarioRelacionado.nome}</p>
+            <p className="flex font-semibold">
+              {usuarioRelacionado?.nome || "carregando..."}
+            </p>
           </div>
 
           {isMedico ? (
@@ -127,7 +140,10 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
               <span className="font-semibold text-sm text-neutral-400/80">
                 CPF
               </span>
-              <p> {usuarioRelacionado.cpf}</p>
+              <p>
+                {" "}
+                {formatarCpf(usuarioRelacionado?.cpf || "") || "carregando..."}
+              </p>
             </div>
           ) : (
             <>
@@ -135,13 +151,13 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
                 <span className="font-semibold text-sm text-neutral-400/80">
                   ESPECIALIDADE
                 </span>
-                <p>{usuarioRelacionado.especialidade}</p>
+                <p>{usuarioRelacionado?.especialidade || "carregando..."}</p>
               </div>
               <div className="flex flex-col">
                 <span className="font-semibold text-sm text-neutral-400/80">
                   CRM
                 </span>
-                <p> {usuarioRelacionado.crm}</p>
+                <p> {usuarioRelacionado?.crm || "carregando..."}</p>
               </div>
             </>
           )}
@@ -149,13 +165,13 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
             <span className="font-semibold text-sm text-neutral-400/80">
               EMAIL
             </span>
-            <p> {usuarioRelacionado.email}</p>
+            <p> {usuarioRelacionado?.email || "carregando..."}</p>
           </div>
           <div className="flex flex-col">
             <span className="font-semibold text-sm text-neutral-400/80">
               TELEFONE
             </span>
-            <p> {usuarioRelacionado.telefone}</p>
+            <p>{formatarTelefone(usuarioRelacionado?.telefone || "")}</p>
           </div>
         </div>
       </div>
@@ -173,7 +189,7 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
                 <span className="font-semibold text-sm text-neutral-400/80">
                   BAIRRO
                 </span>
-                <p> {endereco.bairro}</p>
+                <p> {endereco?.bairro || "carregando..."}</p>
               </div>
 
               <div className="flex flex-col">
@@ -181,7 +197,8 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
                   RUA
                 </span>
                 <p>
-                  {endereco.rua}, {endereco.numero}
+                  {endereco?.rua || "carregando..."},{" "}
+                  {endereco?.numero || "carregando..."}
                 </p>
               </div>
 
@@ -189,7 +206,7 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
                 <span className="font-semibold text-sm text-neutral-400/80">
                   CEP
                 </span>
-                <p> {endereco.cep}</p>
+                <p> {endereco?.cep || "carregando..."}</p>
               </div>
             </div>
           </div>

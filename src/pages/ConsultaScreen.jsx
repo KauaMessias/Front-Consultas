@@ -6,6 +6,8 @@ import ConsultasMarcadas from "../components/ConsultasMarcadas";
 import ConsultaModal from "../components/ConsultaModal";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { HiOutlineClock } from "react-icons/hi";
+import { Spinner } from "../components/Spinner";
+import { toast } from "sonner";
 
 function ConsultaScreen() {
   const [consultas, setConsultas] = useState([]);
@@ -13,21 +15,29 @@ function ConsultaScreen() {
   const [consultaSelecionada, setConsultaSelecionada] = useState(null);
   const isMedico = sessionStorage.getItem("role") === "[ROLE_MEDICO]";
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   async function getConsultas() {
     let consultasApi;
 
-    if (sessionStorage.getItem("role") === "[ROLE_MEDICO]") {
-      consultasApi = await apiPrivate.get(
-        "/api/v1/consultas/medico/minhasConsultas",
-      );
-    } else {
-      consultasApi = await apiPrivate.get(
-        "/api/v1/consultas/cliente/minhasConsultas",
-      );
-    }
+    setLoading(true);
+    try {
+      if (sessionStorage.getItem("role") === "[ROLE_MEDICO]") {
+        consultasApi = await apiPrivate.get(
+          "/api/v1/consultas/medico/minhasConsultas",
+        );
+      } else {
+        consultasApi = await apiPrivate.get(
+          "/api/v1/consultas/cliente/minhasConsultas",
+        );
+      }
 
-    setConsultas(consultasApi.data.content);
+      setConsultas(consultasApi?.data?.content ?? []);
+    } catch (error) {
+      toast.error("Erro ao buscar consultas.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function open() {
@@ -68,11 +78,15 @@ function ConsultaScreen() {
         </header>
 
         <div className="h-fit w-2/3 justify-center self-center flex flex-col gap-6">
-          <ConsultasMarcadas
-            consultas={consultas}
-            getConsultas={getConsultas}
-            setConsultaSelecionada={setConsultaSelecionada}
-          />
+          {loading ? (
+            <Spinner />
+          ) : (
+            <ConsultasMarcadas
+              consultas={consultas}
+              getConsultas={getConsultas}
+              setConsultaSelecionada={setConsultaSelecionada}
+            />
+          )}
         </div>
       </div>
       {isOpen && (

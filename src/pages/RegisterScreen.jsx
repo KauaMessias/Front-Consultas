@@ -2,6 +2,8 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { apiPublic } from "../services/api";
 import { useState } from "react";
+import { formatarCpf, formatarTelefone } from "../utils/formatters";
+import { toast } from "sonner";
 
 function RegisterScreen() {
   const navigate = useNavigate();
@@ -15,26 +17,42 @@ function RegisterScreen() {
     crm: "",
     cpf: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [camposInvalidos, setCamposInvalidos] = useState({});
+  const [telefoneMask, setTelefoneMask] = useState("");
   let campos;
 
   async function registrar(e) {
     e.preventDefault();
-    if (tipo === "Cliente") {
-      await apiPublic.post("/api/v1/clientes", usuarioForm, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-    } else {
-      await apiPublic.post("/api/v1/medicos", usuarioForm, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+    setLoading(true);
+    console.log(usuarioForm.cpf);
+    try {
+      if (tipo === "Cliente") {
+        await apiPublic.post("/api/v1/clientes", usuarioForm, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+      } else {
+        await apiPublic.post("/api/v1/medicos", usuarioForm, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+      }
+      toast.success("Usuário criado com sucesso!");
+      setCamposInvalidos({});
+      navigate("/login");
+    } catch (error) {
+      if (error.response?.status === 400) {
+        setCamposInvalidos(error.response.data);
+        toast.error("Preencha os campos corretamente.");
+      }
+    } finally {
+      setLoading(false);
     }
-    navigate("/login");
   }
 
   if (tipo === "Cliente") {
@@ -43,9 +61,13 @@ function RegisterScreen() {
         type="text"
         placeholder="Cpf"
         onChange={(e) => {
-          setUsuarioForm({ ...usuarioForm, cpf: e.target.value });
+          const digitos = e.target.value.replace(/\D/g, "").slice(0, 11);
+          setUsuarioForm({ ...usuarioForm, cpf: digitos });
+          setCamposInvalidos({});
         }}
-        className="border rounded-xl pl-1 w-full flex items-center focus:border-2 focus:outline-none shadow-md shadow-neutral-400 bg-neutral-100"
+        maxLength={14}
+        value={formatarCpf(usuarioForm.cpf)}
+        className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.cpf ? "border-red-700" : ""}`}
       />
     );
   } else {
@@ -56,16 +78,18 @@ function RegisterScreen() {
           placeholder="Crm"
           onChange={(e) => {
             setUsuarioForm({ ...usuarioForm, crm: e.target.value });
+            setCamposInvalidos({});
           }}
-          className="border rounded-xl pl-1 w-full flex items-center focus:border-2 focus:outline-none shadow-md shadow-neutral-400 bg-neutral-100"
+          className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.crm ? "border-red-700" : ""}`}
         />
         <input
           type="text"
           placeholder="Especialidade"
           onChange={(e) => {
             setUsuarioForm({ ...usuarioForm, especialidade: e.target.value });
+            setCamposInvalidos({});
           }}
-          className="border rounded-xl pl-1 w-full flex items-center focus:border-2 focus:outline-none shadow-md shadow-neutral-400 bg-neutral-100"
+          className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.especialidade ? "border-red-700" : ""}`}
         />
       </div>
     );
@@ -73,7 +97,7 @@ function RegisterScreen() {
 
   return (
     <div className="bg-neutral-950 w-screen h-screen flex justify-center items-center">
-      <div className="bg-neutral-300 rounded-2xl h-2/3 w-1/3 flex flex-col gap-8">
+      <div className="bg-slate-100 rounded-2xl h-fit pb-8 w-1/3 flex flex-col gap-8">
         <h1 className="font-mono text-5xl font-black pt-14 text-center">
           Criar Usuário
         </h1>
@@ -83,7 +107,7 @@ function RegisterScreen() {
           id="tipo"
           value={tipo}
           onChange={(e) => setTipo(e.target.value)}
-          className="border-2 w-1/5 self-center"
+          className="w-fit border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 self-center"
         >
           <option value="Médico">Médico</option>
           <option value="Cliente">Cliente</option>
@@ -91,7 +115,7 @@ function RegisterScreen() {
 
         <form
           onSubmit={registrar}
-          className="flex flex-col gap-6 w-2/5 self-center"
+          className="flex flex-col gap-5 w-2/5 self-center"
         >
           <input
             type="email"
@@ -101,45 +125,58 @@ function RegisterScreen() {
             placeholder="Email"
             onChange={(e) => {
               setUsuarioForm({ ...usuarioForm, email: e.target.value });
+              setCamposInvalidos({});
             }}
-            className="border rounded-xl pl-1 w-full flex items-center focus:border-2 focus:outline-none shadow-md shadow-neutral-400 bg-neutral-100"
+            className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.email ? "border-red-700" : ""}`}
           />
 
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Senha"
-            onChange={(e) => {
-              setUsuarioForm({ ...usuarioForm, senha: e.target.value });
-            }}
-            className="border rounded-xl pl-1 w-full flex items-center focus:border-2 focus:outline-none shadow-md shadow-neutral-400 bg-neutral-100"
-          />
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-neutral-500">
+              Use 8+ caracteres com letras, número e símbolo.
+            </p>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Senha@123"
+              title="Mínimo de 8 caracteres, com letra maiúscula, minúscula, número e símbolo."
+              onChange={(e) => {
+                setUsuarioForm({ ...usuarioForm, senha: e.target.value });
+                setCamposInvalidos({});
+              }}
+              className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.senha ? "border-red-700" : ""}`}
+            />
+          </div>
 
           <input
             type="text"
             placeholder="Nome"
-            onChange={(e) =>
-              setUsuarioForm({ ...usuarioForm, nome: e.target.value })
-            }
-            className="border rounded-xl pl-1 w-full flex items-center focus:border-2 focus:outline-none shadow-md shadow-neutral-400 bg-neutral-100"
+            onChange={(e) => {
+              setUsuarioForm({ ...usuarioForm, nome: e.target.value });
+              setCamposInvalidos({});
+            }}
+            className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.nome ? "border-red-700" : ""}`}
           />
 
           <input
             type="text"
             placeholder="Telefone"
-            onChange={(e) =>
-              setUsuarioForm({ ...usuarioForm, telefone: e.target.value })
-            }
-            className="border rounded-xl pl-1 w-full flex items-center focus:border-2 focus:outline-none shadow-md shadow-neutral-400 bg-neutral-100"
+            onChange={(e) => {
+              const digitos = e.target.value.replace(/\D/g, "").slice(0, 11);
+              setUsuarioForm({ ...usuarioForm, telefone: digitos });
+              setCamposInvalidos({});
+            }}
+            value={formatarTelefone(usuarioForm.telefone)}
+            className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.telefone ? "border-red-700" : ""}`}
           />
 
           {campos}
 
           <input
             type="submit"
-            value="Criar"
-            className="bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 w-47 mt-8 shadow-lg shadow-neutral-500"
+            value={loading ? "Criando..." : "Criar"}
+            disabled={loading}
+            className="bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 w-40 mt-2 shadow-lg shadow-neutral-500"
           />
         </form>
       </div>

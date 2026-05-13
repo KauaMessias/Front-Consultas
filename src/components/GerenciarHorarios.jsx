@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { apiPrivate } from "../services/api";
 import HorariosMedico from "./HorariosMedico";
+import { Spinner } from "./Spinner";
+import { toast } from "sonner";
 
 function GerenciarHorarios({ isOpen, medicoId, onClose }) {
   const [horarios, setHorarios] = useState([]);
@@ -12,19 +14,28 @@ function GerenciarHorarios({ isOpen, medicoId, onClose }) {
     duracao: "",
     ativo: true,
   });
+  const [loading, setLoading] = useState(false);
+  const [horariosLoading, setHorariosLoading] = useState(false);
 
-  async function handleSubmit(e) {
+  async function criarHorario(e) {
     e.preventDefault();
+    setLoading(true);
+    try {
+      await apiPrivate.post("/api/v1/medicos/horarios", horarioForm, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
 
-    await apiPrivate.post("/api/v1/medicos/horarios", horarioForm, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-
-    limparHorario();
-    getHorarios();
+      limparHorario();
+      getHorarios();
+      toast.success("Horário criado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao criar horário.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function limparHorario() {
@@ -38,11 +49,18 @@ function GerenciarHorarios({ isOpen, medicoId, onClose }) {
   }
 
   async function getHorarios() {
-    const response = await apiPrivate.get(
-      `/api/v1/medicos/${medicoId}/horarios`,
-    );
+    setHorariosLoading(true);
+    try {
+      const response = await apiPrivate.get(
+        `/api/v1/medicos/${medicoId}/horarios`,
+      );
 
-    setHorarios(response.data);
+      setHorarios(response.data);
+    } catch (error) {
+      toast.error("Erro ao buscar horários");
+    } finally {
+      setHorariosLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -65,7 +83,7 @@ function GerenciarHorarios({ isOpen, medicoId, onClose }) {
       <h1 className="font-mono text-5xl font-black mt-14 text-center">
         Gerenciar Horários
       </h1>
-      <form className="flex flex-col" onSubmit={handleSubmit}>
+      <form className="flex flex-col" onSubmit={criarHorario}>
         <div className="flex gap-8 self-center">
           <select
             className="rounded-md border-2 w-1/5 self-center"
@@ -97,7 +115,7 @@ function GerenciarHorarios({ isOpen, medicoId, onClose }) {
 
           <input
             type="time"
-            name="horarFinal"
+            name="horaFinal"
             id="horaFinal"
             className="border-2 rounded-lg p-0.5"
             placeholder="Horario Final"
@@ -126,7 +144,8 @@ function GerenciarHorarios({ isOpen, medicoId, onClose }) {
         </div>
         <input
           type="submit"
-          value="Salvar"
+          value={loading ? "Salvando..." : "Salvar"}
+          disabled={loading}
           className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 w-47 mt-8 shadow-lg shadow-neutral-500"
         />
       </form>
@@ -136,12 +155,16 @@ function GerenciarHorarios({ isOpen, medicoId, onClose }) {
         Meus Horários
       </h1>
       <div className="self-center w-full flex flex-col items-center  gap-6">
-        {horarios && (
-          <HorariosMedico
-            horarios={horarios}
-            setHorarioForm={setHorarioForm}
-            getHorarios={getHorarios}
-          />
+        {horariosLoading ? (
+          <Spinner />
+        ) : (
+          horarios && (
+            <HorariosMedico
+              horarios={horarios}
+              setHorarioForm={setHorarioForm}
+              getHorarios={getHorarios}
+            />
+          )
         )}
       </div>
     </div>

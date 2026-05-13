@@ -2,6 +2,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { IoPlay } from "react-icons/io5";
 import { IoIosPause } from "react-icons/io";
 import { apiPrivate } from "../services/api";
+import { toast } from "sonner";
 
 function HorarioMedico({ horarios, setHorarioForm, getHorarios }) {
   if (!horarios || horarios.length === 0) {
@@ -9,13 +10,23 @@ function HorarioMedico({ horarios, setHorarioForm, getHorarios }) {
   }
 
   async function alternarHorario(horarioId) {
-    await apiPrivate.patch(`/api/v1/medicos/horarios/${horarioId}`);
-    getHorarios();
+    try {
+      await apiPrivate.patch(`/api/v1/medicos/horarios/${horarioId}`);
+      getHorarios();
+      toast.success("Horário modificado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao modificar horário.");
+    }
   }
 
   async function deletarHorario(horarioId) {
-    await apiPrivate.delete(`/api/v1/medicos/horarios/${horarioId}`);
-    getHorarios();
+    try {
+      await apiPrivate.delete(`/api/v1/medicos/horarios/${horarioId}`);
+      getHorarios();
+      toast.success("Horário removido com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao remover horário.");
+    }
   }
 
   return horarios.map((horario) => (

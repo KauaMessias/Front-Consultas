@@ -4,14 +4,18 @@ import RegisterScreen from "./RegisterScreen";
 import { apiPublic } from "../services/api";
 import { useNavigate, Link } from "react-router";
 import { IoEnterOutline } from "react-icons/io5";
+import { toast } from "sonner";
 
 function LoginScreen() {
   const navigate = useNavigate();
   const [loginForm, setLoginForm] = useState({ email: "", senha: "" });
   const [errorLogin, setErrorLogin] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function login(e) {
     e.preventDefault();
+
+    setLoading(true);
 
     try {
       const response = await apiPublic.post("/api/v1/auth/login", loginForm);
@@ -19,12 +23,13 @@ function LoginScreen() {
       sessionStorage.setItem("token", response.data.token);
       sessionStorage.setItem("role", response.data.role);
       setErrorLogin("");
-      console.log(sessionStorage.getItem("token"));
       navigate("/");
     } catch (error) {
       if (error.response?.status === 403) {
         setErrorLogin(error.response.data);
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -82,10 +87,11 @@ function LoginScreen() {
           <div className="flex flex-col gap-2 w-1/2">
             <button
               type="submit"
+              disabled={loading}
               className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-lg gap-2"
             >
               <IoEnterOutline />
-              Entrar
+              {loading ? "Entrando..." : "Entrar"}
             </button>
 
             <Link to="/registrar"> Cadastrar uma conta </Link>

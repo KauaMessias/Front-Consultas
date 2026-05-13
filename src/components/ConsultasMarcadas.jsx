@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { apiPrivate } from "../services/api";
 import { IoIosArrowRoundBack } from "react-icons/io";
 
@@ -32,22 +33,33 @@ function ConsultasMarcadas({
     if (!window.confirm("Tem certeza de que deseja cancelar esta consulta?"))
       return;
 
-    await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
-      params: {
-        status: "CANCELADA",
-      },
-    });
-    getConsultas();
+    try {
+      await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
+        params: {
+          status: "CANCELADA",
+        },
+      });
+      toast.success("Consulta cancelada com sucesso!");
+      getConsultas();
+    } catch (error) {
+      toast.error("Erro ao cancelar a consulta.");
+    }
   }
   async function concluirConsulta(consultaId) {
     if (!window.confirm("Tem certeza de que deseja concluir esta consulta?"))
       return;
-    await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
-      params: {
-        status: "CONCLUIDA",
-      },
-    });
-    getConsultas();
+
+    try {
+      await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
+        params: {
+          status: "CONCLUIDA",
+        },
+      });
+      toast.success("Consulta concluida com sucesso!");
+      getConsultas();
+    } catch (error) {
+      toast.error("Erro ao concluir a consulta.");
+    }
   }
   return consultas.map((consulta) => (
     <div
@@ -91,7 +103,7 @@ function ConsultasMarcadas({
           >
             {consulta.status}
           </span>
-          {isMedico && consulta.status === "PENDENTE" ? (
+          {consulta.status === "PENDENTE" ? (
             <div className="flex flex-col gap-2 ">
               {role !== "[ROLE_CLIENTE]" && (
                 <button

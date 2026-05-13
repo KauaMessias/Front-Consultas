@@ -2,6 +2,8 @@ import { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 
 import { apiPrivate } from "../services/api";
+import { Spinner } from "./Spinner";
+import { toast } from "sonner";
 
 function HorariosMedico({ medico, onClose }) {
   const [horarios, setHorarios] = useState([]);
@@ -13,26 +15,43 @@ function HorariosMedico({ medico, onClose }) {
     medico_id: medico.id,
     cliente_id: sessionStorage.getItem("id"),
   });
-
+  const [horariosLoading, setHorariosLoading] = useState(false);
+  const [agendarLoading, setAgendarLoading] = useState(false);
   const [horarioSelecionado, setHorarioSelecionado] = useState("");
 
   async function buscarHorarios(dataSelecionada) {
     setHorarios([]);
-    const response = await apiPrivate.get(
-      `/api/v1/medicos/${medico.id}/horarios/disponiveis`,
-      {
-        params: {
-          data: dataSelecionada,
+
+    setHorariosLoading(true);
+    try {
+      const response = await apiPrivate.get(
+        `/api/v1/medicos/${medico.id}/horarios/disponiveis`,
+        {
+          params: {
+            data: dataSelecionada,
+          },
         },
-      },
-    );
-    setHorarios(response.data);
+      );
+      setHorarios(response.data);
+    } catch (error) {
+      toast.error("Erro ao buscar horários disponíveis.");
+    } finally {
+      setHorariosLoading(false);
+    }
   }
 
   async function agendarConsulta() {
-    await apiPrivate.post("/api/v1/consultas", consultaForm);
-    limparConsulta();
-    onClose();
+    setAgendarLoading(true);
+    try {
+      await apiPrivate.post("/api/v1/consultas", consultaForm);
+      limparConsulta();
+      onClose();
+      toast.success("Consulta agendada com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao agendar consulta.");
+    } finally {
+      setAgendarLoading(false);
+    }
   }
 
   function mostrarHorario(horario) {
@@ -77,7 +96,6 @@ function HorariosMedico({ medico, onClose }) {
         className="overflow-y-auto w-full h-full rounded-2xl p-4 bg-neutral-300 flex flex-col items-center gap-2"
         onSubmit={(e) => {
           e.preventDefault();
-          console.log(consultaForm);
           agendarConsulta();
         }}
       >
@@ -98,12 +116,13 @@ function HorariosMedico({ medico, onClose }) {
               setHorarioSelecionado("");
               setData(novaData);
               buscarHorarios(novaData);
-              console.log(e.target.value);
             }
           }}
         />
         <div className="flex flex-wrap p-4 gap-3 justify-center">
-          {!data ? null : horarios.length > 0 ? (
+          {horariosLoading ? (
+            <Spinner />
+          ) : !data ? null : horarios.length > 0 ? (
             horarios.map((horario) => mostrarHorario(horario))
           ) : (
             <p>Nenhum horário encontrado</p>
@@ -139,8 +158,8 @@ function HorariosMedico({ medico, onClose }) {
         />
         <input
           type="submit"
-          value="Agendar"
-          disabled={!horarioSelecionado}
+          value={agendarLoading ? "Agendando..." : "Agendar"}
+          disabled={!horarioSelecionado || agendarLoading}
           className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-lg p-1 w-fit shadow-lg shadow-neutral-500"
         />
       </form>

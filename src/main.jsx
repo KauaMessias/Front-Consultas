@@ -11,6 +11,7 @@ import { RouterProvider } from "react-router/dom";
 import App from "./App.jsx";
 import "./index.css";
 import AgendarConsulta from "./pages/AgendarConsulta.jsx";
+import { Toaster } from "sonner";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeScreen /> },
@@ -25,6 +26,24 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <Toaster
+      richColors
+      position="top-center"
+      duration={4000}
+      visibleToasts={2}
+      toastOptions={{
+        classNames: {
+          toast:
+            "rounded-md border shadow-xl px-4 py-3 text-sm flex items-center gap-3",
+          title: "font-semibold",
+          description: "text-xs opacity-80",
+          success: "!bg-emerald-50 !text-emerald-800 !border-emerald-200",
+          error: "!bg-red-50 !text-red-800 !border-red-200",
+          warning: "!bg-yellow-50 !text-yellow-800 !border-yellow-200",
+          info: "!bg-blue-50 !text-blue-800 !border-blue-200",
+        },
+      }}
+    />
     <RouterProvider router={router} />
   </StrictMode>,
 );

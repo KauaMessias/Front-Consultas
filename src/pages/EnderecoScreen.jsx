@@ -3,6 +3,8 @@ import BuscarEnderecos from "../components/BuscarEnderecos";
 import { apiPrivate } from "../services/api";
 import { Link } from "react-router";
 import { IoIosArrowRoundBack } from "react-icons/io";
+import { Spinner } from "../components/Spinner";
+import { toast } from "sonner";
 
 function EnderecoScreen() {
   const [enderecos, setEnderecos] = useState([]);
@@ -15,14 +17,16 @@ function EnderecoScreen() {
     rua: "",
     numero: "",
   });
+  const [enderecosLoading, setEnderecosLoading] = useState(false);
+  const [salvarLoading, setSalvarLoading] = useState(false);
   const [camposInvalidos, setCamposInvalidos] = useState({});
 
-  async function handleSubmit(e) {
+  async function salvarEndereco(e) {
     e.preventDefault();
-
+    setSalvarLoading(true);
     try {
       if (enderecoId) {
-        await apiPrivate.put(`api/v1/enderecos/${enderecoId}`, enderecoForm, {
+        await apiPrivate.put(`/api/v1/enderecos/${enderecoId}`, enderecoForm, {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -39,9 +43,12 @@ function EnderecoScreen() {
 
       limparCampos();
       getEnderecos();
+      toast.success("Endereço salvo com sucesso!");
     } catch (error) {
       setCamposInvalidos(error.response?.data);
-      window.alert("Preencha todos os campos!");
+      toast.error("Erro ao salvar endereço.");
+    } finally {
+      setSalvarLoading(false);
     }
   }
 
@@ -60,8 +67,15 @@ function EnderecoScreen() {
   }
 
   async function getEnderecos() {
-    const enderecosApi = await apiPrivate.get("/api/v1/enderecos");
-    setEnderecos(enderecosApi.data.content ?? []);
+    setEnderecosLoading(true);
+    try {
+      const enderecosApi = await apiPrivate.get("/api/v1/enderecos");
+      setEnderecos(enderecosApi.data.content ?? []);
+    } catch (error) {
+      toast.error("Erro ao buscar endereços");
+    } finally {
+      setEnderecosLoading(false);
+    }
   }
 
   function preencherForm(endereco) {
@@ -99,7 +113,7 @@ function EnderecoScreen() {
         <div className="flex flex-col gap-14">
           <div className="w-full flex flex-col">
             <form
-              onSubmit={handleSubmit}
+              onSubmit={salvarEndereco}
               className="flex flex-col gap-6  self-center"
             >
               <div className="flex gap-58 justify-between">
@@ -248,7 +262,8 @@ function EnderecoScreen() {
               <div className="flex justify-evenly">
                 <input
                   type="submit"
-                  value="Salvar"
+                  value={salvarLoading ? "Salvando..." : "Salvar"}
+                  disabled={salvarLoading}
                   className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 w-47 mt-8 shadow-lg shadow-neutral-500"
                 />
                 <input
@@ -265,12 +280,18 @@ function EnderecoScreen() {
             Meus Endereços
           </h1>
           <div className="flex flex-col justify-center items-center gap-6 w-5/6 self-center">
-            <BuscarEnderecos
-              enderecos={enderecos}
-              getEnderecos={getEnderecos}
-              preencherForm={preencherForm}
-              limparCampos={limparCampos}
-            />
+            {enderecosLoading ? (
+              <Spinner />
+            ) : enderecos?.length < 1 ? (
+              "Nenhum Endereço encontrado."
+            ) : (
+              <BuscarEnderecos
+                enderecos={enderecos}
+                getEnderecos={getEnderecos}
+                preencherForm={preencherForm}
+                limparCampos={limparCampos}
+              />
+            )}
           </div>
         </div>
       </div>

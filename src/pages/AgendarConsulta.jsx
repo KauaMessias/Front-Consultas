@@ -4,11 +4,13 @@ import BuscarMedicos from "../components/BuscarMedicos";
 import HorariosDisponiveis from "../components/HorariosDisponiveis";
 import { Link } from "react-router";
 import { IoIosArrowRoundBack } from "react-icons/io";
+import { Spinner } from "../components/Spinner";
+import { toast } from "sonner";
 
 function AgendarConsulta() {
   const [medicos, setMedicos] = useState([]);
   const [medicoSelecionado, setSelecionado] = useState(null);
-
+  const [medicosLoading, setMedicosLoading] = useState(false);
   const inputEspecialidade = useRef();
   const inputCidade = useRef();
   const page = 0;
@@ -17,16 +19,24 @@ function AgendarConsulta() {
   async function getMedicos() {
     const especialidade = inputEspecialidade.current.value;
     const cidade = inputCidade.current.value;
-    const medicosApi = await apiPrivate.get("/api/v1/medicos", {
-      params: {
-        especialidade: especialidade || undefined,
-        cidade: cidade || undefined,
-        page: page,
-        size: size,
-      },
-    });
 
-    setMedicos(medicosApi.data.content ?? []);
+    setMedicosLoading(true);
+    try {
+      const medicosApi = await apiPrivate.get("/api/v1/medicos", {
+        params: {
+          especialidade: especialidade || undefined,
+          cidade: cidade || undefined,
+          page: page,
+          size: size,
+        },
+      });
+
+      setMedicos(medicosApi.data.content ?? []);
+    } catch (error) {
+      toast.error("Erro ao buscar médicos.");
+    } finally {
+      setMedicosLoading(false);
+    }
   }
 
   function selecionar(medico) {
@@ -72,7 +82,11 @@ function AgendarConsulta() {
         </div>
 
         <div className="flex flex-col justify-center items-center gap-6 ">
-          <BuscarMedicos medicos={medicos} setSelecionado={selecionar} />
+          {medicosLoading ? (
+            <Spinner />
+          ) : (
+            <BuscarMedicos medicos={medicos} setSelecionado={selecionar} />
+          )}
         </div>
       </div>
 

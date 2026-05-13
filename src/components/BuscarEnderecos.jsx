@@ -1,6 +1,7 @@
 import { apiPrivate } from "../services/api";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 import { HiOutlineTrash } from "react-icons/hi2";
+import { toast } from "sonner";
 
 function BuscarEnderecos({
   enderecos,
@@ -15,17 +16,19 @@ function BuscarEnderecos({
       await apiPrivate.delete(`/api/v1/enderecos/${id}`);
       limparCampos();
       getEnderecos();
+      toast.success("Endereço removido com sucesso!");
     } catch (error) {
-      window.alert("falha ao remover o endereço!");
+      toast.error("Erro ao remover o endereço.");
     }
   }
 
-  async function alterarPrincial(id) {
+  async function alterarPrincipal(id) {
     try {
       await apiPrivate.patch(`/api/v1/enderecos/${id}`);
       getEnderecos();
+      toast.success("Endereço principal alterado com sucesso!");
     } catch (error) {
-      window.alert("Falha ao tentar mudar o endereço principal");
+      toast.error("Erro ao mudar o endereço principal.");
     }
   }
 
@@ -55,7 +58,7 @@ function BuscarEnderecos({
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            alterarPrincial(endereco.id);
+            alterarPrincipal(endereco.id);
           }}
         >
           {" "}
