@@ -1,14 +1,11 @@
 import { toast } from "sonner";
 import { apiPrivate } from "../services/api";
-import { IoIosArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router";
 
-function ConsultasMarcadas({
-  consultas,
-  getConsultas,
-  setConsultaSelecionada,
-}) {
+function ConsultasMarcadas({ consultas, getConsultas }) {
   const role = sessionStorage.getItem("role");
   const isMedico = sessionStorage.getItem("role") === "[ROLE_MEDICO]";
+  const navigate = useNavigate();
 
   function statusConsulta(status) {
     switch (status) {
@@ -66,7 +63,9 @@ function ConsultasMarcadas({
       key={consulta.id}
       className={`flex flex-col gap-2 w-3/5 self-center bg-neutral-100/80 shadow-sm hover:scale-105 p-4 transition-all ease-out rounded-md duration-300 cursor-pointer hover:shadow-lg
       ${statusConsulta(consulta.status)}`}
-      onClick={() => setConsultaSelecionada(consulta)}
+      onClick={() => {
+        navigate(`/consultas/${consulta.id}`);
+      }}
     >
       <div className="flex gap-4 h-full">
         <div className="flex flex-col border-r pr-4 border-neutral-300">

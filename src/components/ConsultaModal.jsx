@@ -3,8 +3,14 @@ import { apiPrivate } from "../services/api";
 import { IoCloseOutline } from "react-icons/io5";
 import { formatarCpf, formatarTelefone } from "../utils/formatters";
 import { toast } from "sonner";
+import { useParams } from "react-router";
 
-function ConsultaModal({ consulta, onClose, getConsultas }) {
+function ConsultaModal({
+  consulta,
+  onClose,
+  getConsultas,
+  setConsultaSelecionada,
+}) {
   const [usuarioRelacionado, setUsuarioRelacionado] = useState({});
   const [endereco, setEndereco] = useState({});
   const isMedico = sessionStorage.getItem("role") === "[ROLE_MEDICO]";
@@ -50,11 +56,19 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
       return;
 
     try {
-      await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
-        params: {
-          status: "CANCELADA",
+      const consultaAtualizada = await apiPrivate.patch(
+        `/api/v1/consultas/${consultaId}`,
+        null,
+        {
+          params: {
+            status: "CANCELADA",
+          },
         },
-      });
+      );
+
+      setConsultaSelecionada(consultaAtualizada?.data);
+      getConsultas();
+
       toast.success("Consulta cancelada com sucesso!");
     } catch (error) {
       toast.error("Erro ao cancelar a consulta.");
@@ -65,11 +79,19 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
     if (!window.confirm("Tem certeza de que deseja concluir esta consulta?"))
       return;
     try {
-      await apiPrivate.patch(`/api/v1/consultas/${consultaId}`, null, {
-        params: {
-          status: "CONCLUIDA",
+      const consultaAtualizada = await apiPrivate.patch(
+        `/api/v1/consultas/${consultaId}`,
+        null,
+        {
+          params: {
+            status: "CONCLUIDA",
+          },
         },
-      });
+      );
+
+      setConsultaSelecionada(consultaAtualizada?.data);
+      getConsultas();
+
       toast.success("Consulta concluida com sucesso!");
     } catch (error) {
       toast.error("Erro ao concluir a consulta.");
@@ -78,6 +100,7 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
 
   useEffect(() => {
     buscarUsuarioRelacionado();
+    getConsultas();
   }, []);
 
   return (
@@ -231,21 +254,22 @@ function ConsultaModal({ consulta, onClose, getConsultas }) {
             {consulta.status}
           </p>
         </div>
-        {consulta.status === "PENDENTE" && isMedico && (
+        {consulta.status === "PENDENTE" && (
           <div className="flex gap-16 text-neutral-100 p-4">
-            <button
-              onClick={() => {
-                concluirConsulta(consulta.id);
-                getConsultas();
-              }}
-              className="w-full text-md rounded-lg text-white font-bold bg-green-800 p-2 shadow-md hover:bg-green-900 hover:scale-110 ease-out transition-all duration-300"
-            >
-              Concluir
-            </button>{" "}
+            {isMedico && (
+              <button
+                onClick={() => {
+                  concluirConsulta(consulta.id);
+                }}
+                className="w-full text-md rounded-lg text-white font-bold bg-green-800 p-2 shadow-md hover:bg-green-900 hover:scale-110 ease-out transition-all duration-300"
+              >
+                Concluir
+              </button>
+            )}
+
             <button
               onClick={() => {
                 cancelarConsulta(consulta.id);
-                getConsultas();
               }}
               className="w-full text-md rounded-lg text-white font-bold bg-red-900 p-2 shadow-md hover:bg-red-950 hover:scale-110 ease-out transition-all duration-300"
             >

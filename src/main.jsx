@@ -12,6 +12,8 @@ import App from "./App.jsx";
 import "./index.css";
 import AgendarConsulta from "./pages/AgendarConsulta.jsx";
 import { Toaster } from "sonner";
+import ConsultaModal from "./components/ConsultaModal.jsx";
+import BuscarEnderecos from "./components/BuscarEnderecos.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeScreen /> },
@@ -19,8 +21,10 @@ const router = createBrowserRouter([
   { path: "/registrar", element: <RegisterScreen /> },
   { path: "/perfil", element: <PerfilScreen /> },
   { path: "/consultas", element: <ConsultaScreen /> },
+  { path: "/consultas/:id", element: <ConsultaScreen /> },
   { path: "/agendar", element: <AgendarConsulta /> },
   { path: "/enderecos", element: <EnderecoScreen /> },
+  { path: "/enderecos", element: <BuscarEnderecos /> },
   { path: "*", element: <div>NADA</div> },
 ]);
 

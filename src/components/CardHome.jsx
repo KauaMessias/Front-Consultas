@@ -30,9 +30,7 @@ function CardHome({ consultas }) {
       key={consulta.id}
       className={`flex flex-col justify-center bg-neutral-100 w-1/4 py-8 rounded-2xl shadow-md shadow-neutral-500  hover:shadow-neutral-700 
         hover:scale-105 transition-all duration-300 gap-12 cursor-pointer ease-out f ${statusConsulta(consulta.status)}`}
-      onClick={() =>
-        navigate("/consultas", { state: { consultaSelecionada: consulta } })
-      }
+      onClick={() => navigate(`/consultas/${consulta.id}`)}
     >
       <div className="flex flex-col items-center gap-12">
         {role === "[ROLE_CLIENTE]" ? (

@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { apiPrivate } from "../services/api";
-import { Link, useLocation } from "react-router";
+import {
+  Link,
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router";
 import GerenciarHorarios from "../components/GerenciarHorarios";
 import ConsultasMarcadas from "../components/ConsultasMarcadas";
 import ConsultaModal from "../components/ConsultaModal";
@@ -16,6 +22,8 @@ function ConsultaScreen() {
   const isMedico = sessionStorage.getItem("role") === "[ROLE_MEDICO]";
   const location = useLocation();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  let { id } = useParams();
 
   async function getConsultas() {
     let consultasApi;
@@ -40,19 +48,32 @@ function ConsultaScreen() {
     }
   }
 
+  async function getConsulta() {
+    try {
+      const response = await apiPrivate.get(`/api/v1/consultas/${id}`);
+      setConsultaSelecionada(response?.data);
+    } catch (error) {
+      toast.error("Erro ao buscar consulta.");
+      navigate("/consultas");
+    }
+  }
+
   function open() {
     setOpen(!isOpen);
   }
 
   useEffect(() => {
-    if (location.state?.consultaSelecionada) {
-      setConsultaSelecionada(location.state.consultaSelecionada);
+    if (id) {
+      getConsulta();
+    } else {
+      setConsultaSelecionada(null);
     }
-  }, [location.state]);
+  }, [id]);
 
   useEffect(() => {
     getConsultas();
   }, []);
+
   return (
     <div className="bg-neutral-950 w-screen h-screen flex justify-center items-center">
       <div className="bg-neutral-300 overflow-y-auto pb-4 w-2/3 h-4/5 rounded-2xl flex flex-col gap-20">
@@ -100,7 +121,10 @@ function ConsultaScreen() {
       {consultaSelecionada && (
         <ConsultaModal
           consulta={consultaSelecionada}
-          onClose={() => setConsultaSelecionada(null)}
+          setConsultaSelecionada={setConsultaSelecionada}
+          onClose={() => {
+            (setConsultaSelecionada(null), navigate("/consultas"));
+          }}
           getConsultas={getConsultas}
         />
       )}
