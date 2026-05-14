@@ -98,9 +98,11 @@ function ConsultaScreen() {
           </Link>
         </header>
 
-        <div className="h-fit w-2/3 justify-center self-center flex flex-col gap-6">
+        <div className="h-fit w-2/3 justify-center text-center self-center flex flex-col gap-6">
           {loading ? (
             <Spinner />
+          ) : consultas.length == 0 ? (
+            "Nenhuma consulta encontrada."
           ) : (
             <ConsultasMarcadas
               consultas={consultas}

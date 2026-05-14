@@ -58,8 +58,12 @@ function HorariosMedico({ medico, onClose }) {
     return (
       <input
         key={horario.horario}
-        className={`border border-neutral-500/80 shadow-md hover:scale-110 transition-all ease-out rounded-md p-0.5 bg-neutral-100 duration-300 cursor-pointer hover:shadow-lg
-        ${horarioSelecionado?.horario === horario.horario ? "bg-neutral-950 border-neutral-500/80 shadow-lg scale-105 text-neutral-200" : ""}`}
+        className={`rounded-lg border px-2 py-1.5 text-sm shadow-sm cursor-pointer transition-all duration-200
+    ${
+      horarioSelecionado?.horario === horario.horario
+        ? "bg-neutral-900 text-white border-neutral-900 shadow-md scale-105"
+        : "bg-white text-neutral-800 border-neutral-300 hover:bg-neutral-900 hover:text-white"
+    }`}
         type="button"
         value={horario.horario.slice(0, 5)}
         onClick={(e) => {
@@ -83,86 +87,99 @@ function HorariosMedico({ medico, onClose }) {
   }
 
   return (
-    <div className="fixed w-5/12 h-1/2 rounded-2xl bg-neutral-200 flex flex-col p-2 gap-8 items-center shadow-lg ">
-      <header className="flex justify-end w-full">
-        <button
-          className="hover:scale-110 transition-all duration-300 ease-out"
-          onClick={onClose}
-        >
-          <IoCloseOutline />
-        </button>
-      </header>
-      <form
-        className="overflow-y-auto w-full h-full rounded-2xl p-4 bg-neutral-300 flex flex-col items-center gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          agendarConsulta();
+    <div
+      className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
         }}
+        className="fixed w-fit h-fit rounded-2xl bg-neutral-200 flex flex-col p-4 items-center shadow-lg "
       >
-        <h1 className="font-semibold text-2xl">{medico.nome}</h1>{" "}
-        <h1 className="font-medium mb-4">{medico.especialidade}</h1>
-        <input
-          type="date"
-          name="data"
-          id="data"
-          className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-          onChange={(e) => {
-            const novaData = e.target.value;
-            if (!novaData) {
-              setHorarios([]);
-              setData("");
-              setHorarioSelecionado("");
-            } else {
-              setHorarioSelecionado("");
-              setData(novaData);
-              buscarHorarios(novaData);
-            }
+        <header className="flex justify-end text-3xl w-full">
+          <button
+            className="hover:scale-110 transition-all duration-300 ease-out"
+            onClick={onClose}
+          >
+            <IoCloseOutline />
+          </button>
+        </header>
+        <form
+          className="overflow-y-auto w-full h-full rounded-2xl p-4 flex flex-col items-center gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            agendarConsulta();
           }}
-        />
-        <div className="flex flex-wrap p-4 gap-3 justify-center">
-          {horariosLoading ? (
-            <Spinner />
-          ) : !data ? null : horarios.length > 0 ? (
-            horarios.map((horario) => mostrarHorario(horario))
-          ) : (
-            <p>Nenhum horário encontrado</p>
-          )}
-        </div>
-        <input
-          type="text"
-          name="tipoConsulta"
-          id="tipoConsulta"
-          placeholder="Tipo de Consulta"
-          required
-          className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-          onChange={(e) => {
-            setConsultaForm({
-              ...consultaForm,
-              tipoConsulta: e.target.value,
-            });
-          }}
-        />
-        <input
-          type="text"
-          name="descricao"
-          id="descricao"
-          placeholder="descrição"
-          required
-          className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-          onChange={(e) => {
-            setConsultaForm({
-              ...consultaForm,
-              descricaoConsulta: e.target.value,
-            });
-          }}
-        />
-        <input
-          type="submit"
-          value={agendarLoading ? "Agendando..." : "Agendar"}
-          disabled={!horarioSelecionado || agendarLoading}
-          className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-lg p-1 w-fit shadow-lg shadow-neutral-500"
-        />
-      </form>
+        >
+          <h1 className="font-semibold text-2xl">{medico.nome}</h1>{" "}
+          <h1 className="font-medium mb-4">{medico.especialidade}</h1>
+          <input
+            type="date"
+            name="data"
+            id="data"
+            className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+            onChange={(e) => {
+              const novaData = e.target.value;
+              if (!novaData) {
+                setHorarios([]);
+                setData("");
+                setHorarioSelecionado("");
+              } else {
+                setHorarioSelecionado("");
+                setData(novaData);
+                buscarHorarios(novaData);
+              }
+            }}
+          />
+          <p className="text-sm font-semibold text-neutral-600">
+            Horários disponíveis
+          </p>
+          <div className="w-full max-w-xs flex flex-wrap justify-center gap-2">
+            {horariosLoading ? (
+              <Spinner />
+            ) : !data ? null : horarios.length > 0 ? (
+              horarios.map((horario) => mostrarHorario(horario))
+            ) : (
+              <p>Nenhum horário encontrado</p>
+            )}
+          </div>
+          <input
+            type="text"
+            name="tipoConsulta"
+            id="tipoConsulta"
+            placeholder="Tipo de Consulta"
+            required
+            className="border border-neutral-300 rounded-lg bg-neutral-50 focus:bg-white transition px-2 py-1"
+            onChange={(e) => {
+              setConsultaForm({
+                ...consultaForm,
+                tipoConsulta: e.target.value,
+              });
+            }}
+          />
+          <input
+            type="text"
+            name="descricao"
+            id="descricao"
+            placeholder="descrição"
+            required
+            className="border border-neutral-300 rounded-lg bg-neutral-50 focus:bg-white transition px-2 py-1"
+            onChange={(e) => {
+              setConsultaForm({
+                ...consultaForm,
+                descricaoConsulta: e.target.value,
+              });
+            }}
+          />
+          <input
+            type="submit"
+            value={agendarLoading ? "Agendando..." : "Agendar"}
+            disabled={!horarioSelecionado || agendarLoading}
+            className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:-translate-y-0.5 active:sca transition-all duration-200 text-neutral-300 rounded-lg p-1 w-1/2 shadow-lg shadow-neutral-500"
+          />
+        </form>
+      </div>
     </div>
   );
 }

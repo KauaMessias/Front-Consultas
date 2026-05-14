@@ -11,6 +11,7 @@ function AgendarConsulta() {
   const [medicos, setMedicos] = useState([]);
   const [medicoSelecionado, setSelecionado] = useState(null);
   const [medicosLoading, setMedicosLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const inputEspecialidade = useRef();
   const inputCidade = useRef();
   const page = 0;
@@ -75,9 +76,9 @@ function AgendarConsulta() {
           />
           <input
             type="button"
-            value="Pesquisar"
+            value={medicosLoading ? "Pesquisando..." : "Pesquisar"}
             onClick={getMedicos}
-            className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-lg p-1 w-fit shadow-lg shadow-neutral-500"
+            className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-md gap-2"
           />
         </div>
 

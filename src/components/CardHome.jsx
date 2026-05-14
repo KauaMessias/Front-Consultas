@@ -28,7 +28,7 @@ function CardHome({ consultas }) {
   return consultas.map((consulta) => (
     <div
       key={consulta.id}
-      className={`flex flex-col justify-center bg-neutral-100 w-1/4 py-8 rounded-2xl shadow-md shadow-neutral-500  hover:shadow-neutral-700 
+      className={`flex flex-col justify-center bg-neutral-100 md:w-1/4 py-8 rounded-2xl shadow-md shadow-neutral-500 hover:shadow-lg
         hover:scale-105 transition-all duration-300 gap-12 cursor-pointer ease-out f ${statusConsulta(consulta.status)}`}
       onClick={() => navigate(`/consultas/${consulta.id}`)}
     >

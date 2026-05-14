@@ -72,7 +72,7 @@ function HomeScreen() {
 
   return (
     <div className="bg-neutral-950 overflow-hidden w-screen h-screen flex flex-col items-center">
-      <div className="bg-white/90 w-screen justify-between px-4 h-1/12 flex items-center relative ">
+      <div className="bg-white/90 w-screen justify-between px-4 h-1/10 md:h-1/12 flex items-center relative ">
         <h1 className="text-2xl font-semibold z-10 flex gap-2">
           Olá, {loadingNome ? "Carregando..." : user?.nome}
         </h1>
@@ -119,9 +119,9 @@ function HomeScreen() {
         </button>
       </div>
 
-      <div className="bg-white/90 w-2/3 h-2/3 m-auto flex flex-col p-6 text-center rounded-2xl">
+      <div className="bg-white/90 md:w-2/3 w-fit h-fit md:h-2/3 m-auto flex flex-col p-6 text-center rounded-2xl">
         <h1 className="text-3xl font-semibold">Histórico de Consultas</h1>
-        <div className="flex h-full justify-center gap-8 items-center">
+        <div className="flex flex-col md:flex-row h-full justify-center gap-8 items-center">
           {loading ? (
             <Spinner />
           ) : consultas?.length > 0 ? (

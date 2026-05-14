@@ -155,14 +155,14 @@ function PerfilScreen() {
               type="submit"
               value={updateLoading ? "Salvando..." : "Salvar"}
               disabled={updateLoading}
-              className="bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 w-47 mt-8 shadow-lg shadow-neutral-500"
+              className="w-1/2 h-fit bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-md gap-2"
             />
             <input
               type="button"
-              value={deleteLoading ? "Excluindo" : "Excluir Conta"}
+              value={deleteLoading ? "Excluindo..." : "Excluir Conta"}
               disabled={deleteLoading}
               onClick={excluirUsuario}
-              className="cursor-pointer self-center border border-bg-red-900 hover:scale-105 transition-all duration-200 text-red-500 rounded-md p-1 w-47 mt-8 shadow-lg shadow-neutral-500"
+              className="w-1/2 h-fit cursor-pointer self-center border border-bg-red-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-red-500 rounded-md p-1 shadow-lg shadow-neutral-500"
             />
           </div>
         </form>

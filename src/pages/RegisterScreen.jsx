@@ -97,8 +97,8 @@ function RegisterScreen() {
 
   return (
     <div className="bg-neutral-950 w-screen h-screen flex justify-center items-center">
-      <div className="bg-slate-100 rounded-2xl h-fit pb-8 w-1/3 flex flex-col gap-8">
-        <h1 className="font-mono text-5xl font-black pt-14 text-center">
+      <div className="bg-slate-100 rounded-2xl h-fit  w-fit p-8 flex flex-col gap-8">
+        <h1 className="font-mono text-3xl font-semibold text-center">
           Criar Usuário
         </h1>
 
@@ -107,7 +107,7 @@ function RegisterScreen() {
           id="tipo"
           value={tipo}
           onChange={(e) => setTipo(e.target.value)}
-          className="w-fit border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 self-center"
+          className="w-1/3 border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 self-center"
         >
           <option value="Médico">Médico</option>
           <option value="Cliente">Cliente</option>
@@ -115,7 +115,7 @@ function RegisterScreen() {
 
         <form
           onSubmit={registrar}
-          className="flex flex-col gap-5 w-2/5 self-center"
+          className="flex flex-col gap-5 w-1/2 self-center"
         >
           <input
             type="email"
@@ -131,9 +131,6 @@ function RegisterScreen() {
           />
 
           <div className="flex flex-col gap-2">
-            <p className="text-xs text-neutral-500">
-              Use 8+ caracteres com letras, número e símbolo.
-            </p>
             <input
               type="password"
               name="password"
@@ -145,7 +142,10 @@ function RegisterScreen() {
                 setCamposInvalidos({});
               }}
               className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.senha ? "border-red-700" : ""}`}
-            />
+            />{" "}
+            <p className="text-[11px] leading-tight text-neutral-500">
+              Use 8+ caracteres com maiúscula, minúscula, número e símbolo.
+            </p>
           </div>
 
           <input
@@ -176,7 +176,7 @@ function RegisterScreen() {
             type="submit"
             value={loading ? "Criando..." : "Criar"}
             disabled={loading}
-            className="bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 w-40 mt-2 shadow-lg shadow-neutral-500"
+            className="bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 w-40 mt-2 shadow-lg shadow-neutral-500"
           />
         </form>
       </div>

@@ -5,6 +5,7 @@ import { apiPublic } from "../services/api";
 import { useNavigate, Link } from "react-router";
 import { IoEnterOutline } from "react-icons/io5";
 import { toast } from "sonner";
+import { Spinner } from "../components/Spinner";
 
 function LoginScreen() {
   const navigate = useNavigate();
@@ -34,14 +35,12 @@ function LoginScreen() {
   }
 
   return (
-    <div className="w-screen h-screen bg-neutral-950 flex justify-center items-center p-6">
+    <div className="w-screen h-screen bg-neutral-950 flex justify-center items-center p-4">
       <div
-        className="w-3/10 h-4/6 p-2
-       rounded-2xl flex flex-col gap-18 items-center bg-slate-100 text-center"
+        className="w-fit h-fit
+       rounded-2xl flex flex-col gap-8 items-center p-8 bg-slate-100 text-center"
       >
-        <h1 className="text-4xl font-semibold pt-14 w-2/3">
-          Entre com sua conta
-        </h1>
+        <h1 className="text-3xl font-semibold w-2/3">Entre com sua conta</h1>
 
         <form
           onSubmit={login}
@@ -84,17 +83,24 @@ function LoginScreen() {
             )}
           </div>
 
-          <div className="flex flex-col gap-2 w-1/2">
+          <div className="flex flex-col gap-4 w-2/3">
             <button
               type="submit"
               disabled={loading}
-              className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:scale-105 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-lg gap-2"
+              className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-md gap-2"
             >
               <IoEnterOutline />
               {loading ? "Entrando..." : "Entrar"}
             </button>
 
-            <Link to="/registrar"> Cadastrar uma conta </Link>
+            <hr className="w-5/6 self-center text-neutral-400 " />
+            <Link
+              className="text-sm text-neutral-700 hover:text-black hover:underline transition"
+              to="/registrar"
+            >
+              {" "}
+              Cadastrar uma conta{" "}
+            </Link>
           </div>
         </form>
       </div>
