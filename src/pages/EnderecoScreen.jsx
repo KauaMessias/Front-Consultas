@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { Spinner } from "../components/Spinner";
 import { toast } from "sonner";
+import { formatarCep } from "../utils/formatters";
 
 function EnderecoScreen() {
   const [enderecos, setEnderecos] = useState([]);
@@ -170,10 +171,13 @@ function EnderecoScreen() {
                     name="cep"
                     id="cep"
                     placeholder="cep"
-                    value={formatarCep(enderecoForm.cep)}
-                    onChange={(e) =>
-                      setEnderecoForm({ ...enderecoForm, cep: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const digitos = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 8);
+                      setEnderecoForm({ ...enderecoForm, cep: digitos });
+                    }}
+                    value={formatarCep(enderecoForm.cep || "")}
                     className={`border  rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.cep ? "border-red-700" : "border-neutral-400"}`}
                   />
                 </div>

@@ -61,7 +61,7 @@ function ConsultasMarcadas({ consultas, getConsultas }) {
   return consultas.map((consulta) => (
     <div
       key={consulta.id}
-      className={`flex flex-col gap-2 w-fit self-center bg-neutral-100/80 shadow-sm hover:scale-105 p-4 transition-all ease-out rounded-md duration-300 cursor-pointer hover:shadow-lg
+      className={`flex flex-col gap-2 w-full max-w-3xl min-h-[130px] self-center bg-neutral-100/80 shadow-sm hover:scale-105 p-4 transition-all ease-out rounded-md duration-300 cursor-pointer hover:shadow-lg
       ${statusConsulta(consulta.status)}`}
       onClick={() => {
         navigate(`/consultas/${consulta.id}`);
