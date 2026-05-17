@@ -90,79 +90,83 @@ function PerfilScreen() {
 
   return (
     <div className="bg-neutral-950 w-screen h-screen flex justify-center items-center">
-      <div className="bg-neutral-200 w-2/3 h-4/5 rounded-2xl flex flex-col gap-28">
-        <header className="flex items-center relative pt-14">
-          <h1 className="text-5xl font-bold text-center w-full">
-            Alterar Perfil
-          </h1>
+      <div className="bg-neutral-200 w-fit h-fit rounded-2xl relative flex flex-col p-16 gap-16">
+        <header className="flex flex-col static gap-8">
           <Link
-            className="absolute right-0 top-0 text-6xl hover:scale-110 transition-all duration-300 ease-out"
-            to={"/"}
+            className="absolute left-0 top-0 text-6xl hover:scale-105 transition-all duration-300 ease-out"
+            to={"/home"}
           >
             <IoIosArrowRoundBack />
           </Link>
+
+          <h1 className="text-4xl font-bold text-center w-full">
+            Alterar Perfil
+          </h1>
         </header>
-        <form
-          className="flex flex-col gap-6 w-2/7  self-center"
-          onSubmit={editarUsuario}
-        >
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm text-neutral-500/80">
-              EMAIL
-            </span>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              required
-              placeholder="Digite o email"
-              value={usuario.email}
-              disabled={true}
-              className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-            />
-          </div>
+        <form className="flex flex-col gap-10 " onSubmit={editarUsuario}>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm text-neutral-500/80">
+                EMAIL
+              </span>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                required
+                placeholder="Digite o email"
+                value={usuario.email}
+                disabled={true}
+                className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+              />
+            </div>
 
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm text-neutral-500/80">
-              NOME
-            </span>
-            <input
-              type="text"
-              placeholder="Digite o nome"
-              value={usuario.nome}
-              onChange={(e) => setUsuario({ ...usuario, nome: e.target.value })}
-              className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-            />
-          </div>
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm text-neutral-500/80">
+                NOME
+              </span>
+              <input
+                type="text"
+                placeholder="Digite o nome"
+                value={usuario.nome}
+                onChange={(e) =>
+                  setUsuario({ ...usuario, nome: e.target.value })
+                }
+                className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+              />
+            </div>
 
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm text-neutral-500/80">
-              TELEFONE
-            </span>
-            <input
-              type="text"
-              placeholder="Digite o telefone"
-              onChange={(e) => {
-                const digitos = e.target.value.replace(/\D/g, "").slice(0, 11);
-                setUsuario({ ...usuario, telefone: digitos });
-              }}
-              value={formatarTelefone(usuario.telefone)}
-              className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-            />{" "}
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm text-neutral-500/80">
+                TELEFONE
+              </span>
+              <input
+                type="text"
+                placeholder="Digite o telefone"
+                onChange={(e) => {
+                  const digitos = e.target.value
+                    .replace(/\D/g, "")
+                    .slice(0, 11);
+                  setUsuario({ ...usuario, telefone: digitos });
+                }}
+                value={formatarTelefone(usuario.telefone)}
+                className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+              />
+            </div>
           </div>
-          <div className="flex gap-8">
+          <div className="flex flex-col gap-6 justify-between">
             <input
               type="submit"
               value={updateLoading ? "Salvando..." : "Salvar"}
               disabled={updateLoading}
-              className="w-1/2 h-fit bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-md gap-2"
+              className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-md shadow-neutral-500 flex items-center justify-center text-md"
             />
             <input
               type="button"
               value={deleteLoading ? "Excluindo..." : "Excluir Conta"}
               disabled={deleteLoading}
               onClick={excluirUsuario}
-              className="w-1/2 h-fit cursor-pointer self-center border border-bg-red-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-red-500 rounded-md p-1 shadow-lg shadow-neutral-500"
+              className="cursor-pointer border border-bg-red-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-red-500 rounded-md p-1 shadow-md shadow-neutral-500"
             />
           </div>
         </form>

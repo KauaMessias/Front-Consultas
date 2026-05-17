@@ -46,14 +46,14 @@ function AgendarConsulta() {
 
   return (
     <div className="bg-neutral-950 w-screen h-screen flex items-center justify-center">
-      <div className="pb-8 overflow-y-auto bg-neutral-300 h-4/5 w-1/2 rounded-2xl flex flex-col gap-16">
-        <header className="flex items-center relative pt-14">
-          <h1 className="text-5xl font-bold text-center w-full">
+      <div className="pb-8 overflow-y-auto relative bg-neutral-300 p-8 max-h-160  w-full max-w-3xl min-h-130 h-fit rounded-2xl flex flex-col gap-12">
+        <header className="flex items-center static pt-6">
+          <h1 className="text-4xl font-bold text-center w-full">
             Agendar Consulta
           </h1>
           <Link
-            className="absolute right-0 top-0 text-6xl hover:scale-110 transition-all duration-300 ease-out"
-            to={"/"}
+            className="absolute left-0 top-0 text-6xl hover:scale-110 transition-all duration-300 ease-out"
+            to={"/home"}
           >
             <IoIosArrowRoundBack />
           </Link>
@@ -83,8 +83,13 @@ function AgendarConsulta() {
         </div>
 
         <div className="flex flex-col justify-center items-center gap-6 ">
+          <p className="text-md self-center font-semibold text-neutral-600">
+            Médicos disponíveis
+          </p>
           {medicosLoading ? (
             <Spinner />
+          ) : medicos.length <= 0 ? (
+            "Nenhum médico encontrado."
           ) : (
             <BuscarMedicos medicos={medicos} setSelecionado={selecionar} />
           )}

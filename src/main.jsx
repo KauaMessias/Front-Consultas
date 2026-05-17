@@ -6,7 +6,7 @@ import HomeScreen from "./pages/HomeScreen";
 import PerfilScreen from "./pages/PerfilScreen.jsx";
 import ConsultaScreen from "./pages/ConsultaScreen.jsx";
 import EnderecoScreen from "./pages/EnderecoScreen.jsx";
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import App from "./App.jsx";
 import "./index.css";
@@ -14,9 +14,11 @@ import AgendarConsulta from "./pages/AgendarConsulta.jsx";
 import { Toaster } from "sonner";
 import ConsultaModal from "./components/ConsultaModal.jsx";
 import BuscarEnderecos from "./components/BuscarEnderecos.jsx";
+import NotFoundScreen from "./pages/NotFoundScreen.jsx";
 
 const router = createBrowserRouter([
-  { path: "/", element: <HomeScreen /> },
+  { path: "/", element: <Navigate to="/login" replace /> },
+  { path: "/home", element: <HomeScreen /> },
   { path: "/login", element: <LoginScreen /> },
   { path: "/registrar", element: <RegisterScreen /> },
   { path: "/perfil", element: <PerfilScreen /> },
@@ -25,7 +27,7 @@ const router = createBrowserRouter([
   { path: "/agendar", element: <AgendarConsulta /> },
   { path: "/enderecos", element: <EnderecoScreen /> },
   { path: "/enderecos", element: <BuscarEnderecos /> },
-  { path: "*", element: <div>NADA</div> },
+  { path: "*", element: <NotFoundScreen /> },
 ]);
 
 createRoot(document.getElementById("root")).render(

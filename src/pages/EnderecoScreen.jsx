@@ -103,8 +103,8 @@ function EnderecoScreen() {
             Gerenciar Endereços
           </h1>
           <Link
-            className="absolute right-0 top-0 text-6xl hover:scale-110 transition-all duration-300 ease-out"
-            to={"/"}
+            className="absolute top-0 text-6xl hover:scale-110 transition-all duration-300 ease-out"
+            to={"/home"}
           >
             <IoIosArrowRoundBack />
           </Link>
@@ -170,7 +170,7 @@ function EnderecoScreen() {
                     name="cep"
                     id="cep"
                     placeholder="cep"
-                    value={enderecoForm.cep}
+                    value={formatarCep(enderecoForm.cep)}
                     onChange={(e) =>
                       setEnderecoForm({ ...enderecoForm, cep: e.target.value })
                     }

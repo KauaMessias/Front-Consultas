@@ -76,26 +76,27 @@ function ConsultaScreen() {
 
   return (
     <div className="bg-neutral-950 w-screen h-screen flex justify-center items-center">
-      <div className="bg-neutral-300 overflow-y-auto pb-4 w-2/3 h-4/5 rounded-2xl flex flex-col gap-20">
-        <header className="flex flex-col items-center relative pt-14 gap-8">
-          <h1 className="text-5xl font-bold text-center w-full">
+      <div className="bg-neutral-300 overflow-y-auto relative p-8 h-fit max-h-160  w-full max-w-3xl min-h-130 rounded-2xl flex flex-col gap-14">
+        <header className="flex flex-col static gap-8">
+          <Link
+            className="absolute left-0 top-0 text-6xl hover:scale-105 transition-all duration-300 ease-out"
+            to={"/home"}
+          >
+            <IoIosArrowRoundBack />
+          </Link>
+
+          <h1 className="text-4xl font-bold text-center w-full">
             Minhas Consultas
           </h1>
           {isMedico && (
             <div
-              className="flex items-center gap-2 text-2xl hover:scale-110 transition-all duration-300 ease-out font-medium bg-stone-400 hover:bg-stone-500 shadow-md p-2 rounded-2xl cursor-pointer"
+              className="flex items-center w-fit self-center gap-2 text-2xl hover:scale-110 transition-all duration-300 ease-out font-medium bg-stone-400 hover:bg-stone-500 shadow-md p-2 rounded-2xl cursor-pointer"
               onClick={open}
             >
               <HiOutlineClock />
               Gerenciar Horários
             </div>
           )}
-          <Link
-            className="absolute right-0 top-0 text-6xl hover:scale-105 transition-all duration-300 ease-out"
-            to={"/"}
-          >
-            <IoIosArrowRoundBack />
-          </Link>
         </header>
 
         <div className="h-fit w-2/3 justify-center text-center self-center flex flex-col gap-6">

@@ -2,7 +2,7 @@ function BuscarMedicos({ medicos, setSelecionado }) {
   return medicos.map((medico) => (
     <div
       onClick={() => setSelecionado(medico)}
-      className="transform-view focus:scale-200 flex gap-6 ease-out w-1/2 bg-neutral-200 p-4 rounded-2xl shadow-md shadow-neutral-500  hover:shadow-neutral-700 hover:scale-105 transition-all duration-300 cursor-pointer"
+      className="transform-view focus:scale-200 flex gap-6 ease-out w-full max-w-3/4 bg-neutral-200 p-4 rounded-2xl shadow-md shadow-neutral-500  hover:shadow-neutral-700 hover:scale-105 transition-all duration-300 cursor-pointer"
       key={medico.id}
     >
       <div className="flex flex-col border-r border-neutral-400/60 px-4">

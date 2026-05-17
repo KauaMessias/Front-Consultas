@@ -113,7 +113,9 @@ function HorariosMedico({ medico, onClose }) {
           }}
         >
           <h1 className="font-semibold text-2xl">{medico.nome}</h1>{" "}
-          <h1 className="font-medium mb-4">{medico.especialidade}</h1>
+          <h1 className="font-medium mb-4 bg-neutral-400/35 px-1 py-0.5 rounded-xl">
+            {medico.especialidade}
+          </h1>
           <input
             type="date"
             name="data"
@@ -176,7 +178,7 @@ function HorariosMedico({ medico, onClose }) {
             type="submit"
             value={agendarLoading ? "Agendando..." : "Agendar"}
             disabled={!horarioSelecionado || agendarLoading}
-            className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:-translate-y-0.5 active:sca transition-all duration-200 text-neutral-300 rounded-lg p-1 w-1/2 shadow-lg shadow-neutral-500"
+            className="ease-out bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-lg p-1 w-1/2 shadow-lg shadow-neutral-500"
           />
         </form>
       </div>

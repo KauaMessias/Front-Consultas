@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { apiPrivate } from "../services/api";
 import { IoCloseOutline } from "react-icons/io5";
-import { formatarCpf, formatarTelefone } from "../utils/formatters";
+import {
+  formatarCep,
+  formatarCpf,
+  formatarTelefone,
+} from "../utils/formatters";
 import { toast } from "sonner";
 import { useParams } from "react-router";
 
@@ -105,21 +109,19 @@ function ConsultaModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className={`w-fit h-fit py-8 px-16  gap-12 bg-neutral-200 relative flex flex-col rounded-2xl shadow-md ${statusConsulta(consulta.status)}`}
+        className={`w-fit h-fit p-8 gap-6 bg-neutral-200 relative flex flex-col rounded-2xl shadow-md ${statusConsulta(consulta.status)}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex justify-end">
-          <button
-            className="absolute right-2 top-2 text-5xl cursor-pointer hover:scale-110 transition-all duration-300 ease-out"
-            onClick={onClose}
-          >
-            <IoCloseOutline />
-          </button>
-        </header>
+        <button
+          className="absolute right-0 top-0 text-4xl cursor-pointer hover:scale-110 transition-all duration-300 ease-out"
+          onClick={onClose}
+        >
+          <IoCloseOutline />
+        </button>
 
         <div className="flex flex-col gap-4">
           <h1 className="font-medium  text-neutral-500/80">
@@ -235,7 +237,7 @@ function ConsultaModal({
                   <span className="font-semibold text-sm text-neutral-400/80">
                     CEP
                   </span>
-                  <p> {endereco?.cep || "carregando..."}</p>
+                  <p> {formatarCep(endereco?.cep || "") || "carregando..."}</p>
                 </div>
               </div>
             </div>
@@ -267,7 +269,7 @@ function ConsultaModal({
                   onClick={() => {
                     concluirConsulta(consulta.id);
                   }}
-                  className="w-full text-md rounded-lg text-white font-bold bg-green-800 p-2 shadow-md hover:bg-green-900 hover:scale-110 ease-out transition-all duration-300"
+                  className="w-full text-md rounded-lg text-white font-bold bg-green-800 p-2 shadow-md hover:bg-green-900 hover:-translate-y-0.5 active:scale-95 ease-out transition-all duration-300"
                 >
                   Concluir
                 </button>
@@ -277,7 +279,7 @@ function ConsultaModal({
                 onClick={() => {
                   cancelarConsulta(consulta.id);
                 }}
-                className="w-full text-md rounded-lg text-white font-bold bg-red-900 p-2 shadow-md hover:bg-red-950 hover:scale-110 ease-out transition-all duration-300"
+                className="w-full text-md rounded-lg text-white font-bold bg-red-900 p-2 shadow-md hover:bg-red-950 hover:-translate-y-0.5 active:scale-95 ease-out transition-all duration-300"
               >
                 Cancelar
               </button>

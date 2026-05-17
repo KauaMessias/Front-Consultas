@@ -24,7 +24,7 @@ function LoginScreen() {
       sessionStorage.setItem("token", response.data.token);
       sessionStorage.setItem("role", response.data.role);
       setErrorLogin("");
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       if (error.response?.status === 403) {
         setErrorLogin(error.response.data);
@@ -87,7 +87,7 @@ function LoginScreen() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-md gap-2"
+              className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-md shadow-neutral-500 flex items-center justify-center text-md gap-2"
             >
               <IoEnterOutline />
               {loading ? "Entrando..." : "Entrar"}
