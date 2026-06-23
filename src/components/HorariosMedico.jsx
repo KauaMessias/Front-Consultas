@@ -32,7 +32,7 @@ function HorarioMedico({ horarios, setHorarioForm, getHorarios }) {
   return horarios.map((horario) => (
     <div
       key={horario.id}
-      className={` invalid:border bg-neutral-100 flex justify-between items-center w-1/3 h-fit p-4 rounded-2xl shadow-md shadow-neutral-400 ease-out hover:shadow-neutral-700 hover:scale-105 transition-all duration-300 cursor-pointer
+      className={` invalid:border bg-neutral-100 flex justify-between items-center w-2/3 h-1/4 p-4 rounded-2xl shadow-md shadow-neutral-400 ease-out hover:shadow-neutral-700 hover:scale-105 transition-all duration-300 cursor-pointer
       ${!horario.ativo ? `border border-red-800 opacity-60` : ``}`}
       onClick={() => setHorarioForm(horario)}
     >

@@ -15,6 +15,7 @@ function HorariosMedico({ medico, onClose }) {
     medico_id: medico.id,
     cliente_id: sessionStorage.getItem("id"),
   });
+  const [paginas, setPaginas] = useState([]);
   const [horariosLoading, setHorariosLoading] = useState(false);
   const [agendarLoading, setAgendarLoading] = useState(false);
   const [horarioSelecionado, setHorarioSelecionado] = useState("");
@@ -137,7 +138,7 @@ function HorariosMedico({ medico, onClose }) {
           <p className="text-sm font-semibold text-neutral-600">
             Horários disponíveis
           </p>
-          <div className="w-full max-w-xs flex flex-wrap justify-center gap-2">
+          <div className="w-full max-w-xs max-h-62 overflow-auto flex flex-wrap justify-center gap-2">
             {horariosLoading ? (
               <Spinner />
             ) : !data ? null : horarios.length > 0 ? (

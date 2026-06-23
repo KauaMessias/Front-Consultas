@@ -3,7 +3,7 @@ import { apiPrivate } from "../services/api";
 import BuscarMedicos from "../components/BuscarMedicos";
 import HorariosDisponiveis from "../components/HorariosDisponiveis";
 import { Link } from "react-router";
-import { IoIosArrowRoundBack } from "react-icons/io";
+import { IoIosArrowRoundBack, IoIosArrowRoundForward } from "react-icons/io";
 import { Spinner } from "../components/Spinner";
 import { toast } from "sonner";
 
@@ -11,13 +11,13 @@ function AgendarConsulta() {
   const [medicos, setMedicos] = useState([]);
   const [medicoSelecionado, setSelecionado] = useState(null);
   const [medicosLoading, setMedicosLoading] = useState(false);
+  const [paginaAtual, setPaginaAtual] = useState(0);
+  const [paginas, setPaginas] = useState([]);
   const [loading, setLoading] = useState(false);
   const inputEspecialidade = useRef();
   const inputCidade = useRef();
-  const page = 0;
-  const size = 10;
 
-  async function getMedicos() {
+  async function getMedicos(paginaAtual) {
     const especialidade = inputEspecialidade.current.value;
     const cidade = inputCidade.current.value;
 
@@ -25,14 +25,15 @@ function AgendarConsulta() {
     try {
       const medicosApi = await apiPrivate.get("/api/v1/medicos", {
         params: {
+          page: paginaAtual,
           especialidade: especialidade || undefined,
           cidade: cidade || undefined,
-          page: page,
-          size: size,
         },
       });
 
-      setMedicos(medicosApi.data.content ?? []);
+      setMedicos(medicosApi.data ?? []);
+      setPaginaAtual(paginaAtual);
+      criarPaginas(paginaAtual, medicosApi.data.totalPages);
     } catch (error) {
       toast.error("Erro ao buscar médicos.");
     } finally {
@@ -40,8 +41,30 @@ function AgendarConsulta() {
     }
   }
 
+  async function alterarPaginaAtual(alterar) {
+    const novapaginaAtual = alterar ? paginaAtual + 1 : paginaAtual - 1;
+
+    if (novapaginaAtual < 0) return;
+
+    getMedicos(novapaginaAtual);
+  }
+
   function selecionar(medico) {
     setSelecionado(medico);
+  }
+
+  function criarPaginas(paginaAtual, total) {
+    const novasPaginas = [];
+    if (paginaAtual < 7) {
+      for (let i = 0; i < 10; i++) {
+        if (i < total) novasPaginas.push(i);
+      }
+    } else {
+      for (let i = paginaAtual - 4; i <= paginaAtual + 5; i++) {
+        if (i < total) novasPaginas.push(i);
+      }
+    }
+    setPaginas(novasPaginas);
   }
 
   return (
@@ -77,7 +100,7 @@ function AgendarConsulta() {
           <input
             type="button"
             value={medicosLoading ? "Pesquisando..." : "Pesquisar"}
-            onClick={getMedicos}
+            onClick={() => getMedicos(0)}
             className="bg-neutral-800 cursor-pointer hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 shadow-lg shadow-neutral-500 flex items-center justify-center text-md gap-2"
           />
         </div>
@@ -88,10 +111,45 @@ function AgendarConsulta() {
           </p>
           {medicosLoading ? (
             <Spinner />
-          ) : medicos.length <= 0 ? (
+          ) : !medicos.content ? (
             "Nenhum médico encontrado."
           ) : (
-            <BuscarMedicos medicos={medicos} setSelecionado={selecionar} />
+            <>
+              <BuscarMedicos
+                medicos={medicos.content}
+                setSelecionado={selecionar}
+              />
+
+              <div className="flex text-center items-center gap-2">
+                <button
+                  className=" cursor-pointer hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center text-4xl gap-2"
+                  onClick={() => alterarPaginaAtual(false)}
+                  disabled={paginaAtual === 0}
+                >
+                  <IoIosArrowRoundBack />
+                </button>
+                <div className="flex gap-2">
+                  {paginas.map((pagina) => {
+                    return (
+                      <button
+                        className={`${pagina === paginaAtual ? "text-lg font-bold" : "hover:underline transition-all active:scale-95"}`}
+                        key={pagina}
+                        disabled={pagina === paginaAtual}
+                        onClick={() => getMedicos(pagina)}
+                      >
+                        {pagina + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  className=" cursor-pointer hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center text-4xl gap-2"
+                  onClick={() => alterarPaginaAtual(true)}
+                >
+                  <IoIosArrowRoundForward />
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
