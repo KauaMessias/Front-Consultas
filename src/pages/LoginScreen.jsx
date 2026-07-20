@@ -44,7 +44,7 @@ function LoginScreen() {
 
         <form
           onSubmit={login}
-          className="flex flex-col items-center mt-4 w-80 gap-16"
+          className="flex flex-col items-center mt-4 w-80 gap-10"
         >
           <div className="flex flex-col gap-1 w-2/3">
             <p className="self-start">Email</p>
@@ -81,9 +81,8 @@ function LoginScreen() {
             {errorLogin && (
               <p className="text-red-700">Login e/ou Senha inválidos</p>
             )}
-          </div>
-
-          <div className="flex flex-col gap-4 w-2/3">
+          </div>{" "}
+          <div className="flex flex-col w-2/3">
             <button
               type="submit"
               disabled={loading}
@@ -92,17 +91,24 @@ function LoginScreen() {
               <IoEnterOutline />
               {loading ? "Entrando..." : "Entrar"}
             </button>
-
-            <hr className="w-5/6 self-center text-neutral-400 " />
-            <Link
-              className="text-sm text-neutral-700 hover:text-black hover:underline transition"
-              to="/registrar"
-            >
-              {" "}
-              Cadastrar uma conta{" "}
-            </Link>
           </div>
         </form>
+        <div className="flex flex-col gap-4 w-2/3">
+          <hr className="w-5/6 self-center text-neutral-400 " />
+          <Link
+            className="text-sm text-neutral-700 hover:text-black hover:underline transition"
+            to="/registrar"
+          >
+            {" "}
+            Cadastrar uma conta{" "}
+          </Link>
+          <Link
+            className="text-sm text-neutral-700 hover:text-black cursor-pointer hover:underline transition"
+            to="/enviarRecuperacao"
+          >
+            Esqueci minha senha
+          </Link>
+        </div>
       </div>
     </div>
   );

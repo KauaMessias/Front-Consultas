@@ -15,6 +15,9 @@ import { Toaster } from "sonner";
 import ConsultaModal from "./components/ConsultaModal.jsx";
 import BuscarEnderecos from "./components/BuscarEnderecos.jsx";
 import NotFoundScreen from "./pages/NotFoundScreen.jsx";
+import ValidarCadastro from "./pages/ValidarCadastro.jsx";
+import RecuperarSenha from "./pages/RecuperarSenha.jsx";
+import EnviarRecuperacao from "./pages/EnviarRecuperacao.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/login" replace /> },
@@ -27,6 +30,9 @@ const router = createBrowserRouter([
   { path: "/agendar", element: <AgendarConsulta /> },
   { path: "/enderecos", element: <EnderecoScreen /> },
   { path: "/enderecos", element: <BuscarEnderecos /> },
+  { path: "/validarEmail/:id", element: <ValidarCadastro /> },
+  { path: "/enviarRecuperacao", element: <EnviarRecuperacao /> },
+  { path: "/recuperarSenha/:id", element: <RecuperarSenha /> },
   { path: "*", element: <NotFoundScreen /> },
 ]);
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiPrivate } from "../services/api";
 import BuscarMedicos from "../components/BuscarMedicos";
 import HorariosDisponiveis from "../components/HorariosDisponiveis";
@@ -14,12 +14,12 @@ function AgendarConsulta() {
   const [paginaAtual, setPaginaAtual] = useState(0);
   const [paginas, setPaginas] = useState([]);
   const [loading, setLoading] = useState(false);
-  const inputEspecialidade = useRef();
-  const inputCidade = useRef();
+  const [especialidade, setEspecialidade] = useState("");
+  const [cidade, setCidade] = useState("");
 
   async function getMedicos(paginaAtual) {
-    const especialidade = inputEspecialidade.current.value;
-    const cidade = inputCidade.current.value;
+    const especialidade = especialidade.current.value;
+    const cidade = cCidade.current.value;
 
     setMedicosLoading(true);
     try {
@@ -69,7 +69,7 @@ function AgendarConsulta() {
 
   return (
     <div className="bg-neutral-950 w-screen h-screen flex items-center justify-center">
-      <div className="pb-8 overflow-y-auto relative bg-neutral-300 p-8 max-h-160  w-full max-w-3xl min-h-130 h-fit rounded-2xl flex flex-col gap-12">
+      <div className="pb-8 overflow-y-auto relative bg-slate-100 p-8 max-h-160  w-full max-w-3xl min-h-130 h-fit rounded-2xl flex flex-col gap-12">
         <header className="flex items-center static pt-6">
           <h1 className="text-4xl font-bold text-center w-full">
             Agendar Consulta
@@ -88,13 +88,13 @@ function AgendarConsulta() {
             name="especialidade"
             id="especialidade"
             placeholder="Especialidade"
-            ref={inputEspecialidade}
+            onChange={(e) => setEspecialidade(e.target.value)}
             className="border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
           />
           <input
             type="text"
             placeholder="Cidade"
-            ref={inputCidade}
+            onChange={(e) => setCidade(e.target.value)}
             className="border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
           />
           <input

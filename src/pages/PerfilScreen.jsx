@@ -17,7 +17,16 @@ function PerfilScreen() {
   const isMedico = sessionStorage.getItem("role") === "[ROLE_MEDICO]";
   const [updateLoading, setUpdateLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [editarSenha, setEditarSenha] = useState(false);
+  const [senha, setSenha] = useState({
+    senha: "",
+    senhaAtual: "",
+    confirmarSenha: "",
+  });
+  const senhasIguais =
+    senha.senha !== "" && senha.senha === senha.confirmarSenha;
   const navigate = useNavigate();
+  const [camposInvalidos, setCamposInvalidos] = useState({});
 
   async function getUsuario() {
     let usuarioApi;
@@ -37,13 +46,15 @@ function PerfilScreen() {
 
   useEffect(() => {
     getUsuario();
+    console.log(senha.senha);
   }, []);
 
   async function editarUsuario(e) {
+    let senhaAlterada;
     e.preventDefault();
     if (!window.confirm("Você realmente quer alterar seus dados?")) return;
-
     setUpdateLoading(true);
+
     try {
       if (isMedico) {
         await apiPrivate.put(`/api/v1/medicos/${usuario.id}`, usuario, {
@@ -60,7 +71,20 @@ function PerfilScreen() {
           },
         });
       }
+      if (editarSenha) {
+        senhaAlterada = await alterarSenha();
+
+        if (!senhaAlterada) {
+          setUpdateLoading(false);
+          return;
+        }
+      }
+
       toast.success("Usuário editado com sucesso!");
+      if (senhaAlterada) {
+        sessionStorage.clear();
+        navigate("/login");
+      }
     } catch (error) {
       toast.error("Erro ao editar o usuário.");
     } finally {
@@ -88,9 +112,37 @@ function PerfilScreen() {
     }
   }
 
+  async function alterarSenha() {
+    if (!senhasIguais) {
+      toast.error("Confirme a senha corretamente.");
+      return false;
+    }
+    try {
+      await apiPrivate.put("/api/v1/auth/alterarSenha", senha, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      toast.success("Dados alterados. Faça login novamente.");
+      return true;
+    } catch (error) {
+      const status = error.response?.status;
+      const message = error.response?.data?.message;
+      if (status === 400) {
+        setCamposInvalidos(error.response.data);
+        toast.error("Formato de senha inválido.");
+      } else {
+        toast.error(message);
+      }
+
+      return false;
+    }
+  }
+
   return (
     <div className="bg-neutral-950 w-screen h-screen flex justify-center items-center">
-      <div className="bg-neutral-200 w-fit h-fit rounded-2xl relative flex flex-col p-16 gap-16">
+      <div className="bg-slate-100 w-fit h-fit rounded-2xl relative flex flex-col p-16 gap-6">
         <header className="flex flex-col static gap-8">
           <Link
             className="absolute left-0 top-0 text-6xl hover:scale-105 transition-all duration-300 ease-out"
@@ -103,58 +155,131 @@ function PerfilScreen() {
             Alterar Perfil
           </h1>
         </header>
-        <form className="flex flex-col gap-10 " onSubmit={editarUsuario}>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm text-neutral-500/80">
-                EMAIL
-              </span>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                required
-                placeholder="Digite o email"
-                value={usuario.email}
-                disabled={true}
-                className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-              />
+        <form className="flex flex-col gap-6 " onSubmit={editarUsuario}>
+          <div className="flex gap-10">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm text-neutral-500/80">
+                  EMAIL
+                </span>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Digite o email"
+                  value={usuario.email}
+                  disabled={true}
+                  className="border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm text-neutral-500/80">
+                  NOME
+                </span>
+                <input
+                  type="text"
+                  placeholder="Digite o nome"
+                  value={usuario.nome}
+                  onChange={(e) =>
+                    setUsuario({ ...usuario, nome: e.target.value })
+                  }
+                  className="border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm text-neutral-500/80">
+                  TELEFONE
+                </span>
+                <input
+                  type="text"
+                  placeholder="Digite o telefone"
+                  onChange={(e) => {
+                    const digitos = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 11);
+                    setUsuario({ ...usuario, telefone: digitos });
+                  }}
+                  value={formatarTelefone(usuario.telefone)}
+                  className="border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+                />
+              </div>
             </div>
 
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm text-neutral-500/80">
-                NOME
-              </span>
-              <input
-                type="text"
-                placeholder="Digite o nome"
-                value={usuario.nome}
-                onChange={(e) =>
-                  setUsuario({ ...usuario, nome: e.target.value })
-                }
-                className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm text-neutral-500/80">
-                TELEFONE
-              </span>
-              <input
-                type="text"
-                placeholder="Digite o telefone"
-                onChange={(e) => {
-                  const digitos = e.target.value
-                    .replace(/\D/g, "")
-                    .slice(0, 11);
-                  setUsuario({ ...usuario, telefone: digitos });
-                }}
-                value={formatarTelefone(usuario.telefone)}
-                className="border border-neutral-300 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
-              />
-            </div>
+            {editarSenha && (
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm text-neutral-500/80">
+                    SENHA ATUAL
+                  </span>
+                  <input
+                    type="password"
+                    name="senhaAtual"
+                    id="senhaAtual"
+                    placeholder="Confirme sua senha atual"
+                    required
+                    onChange={(e) =>
+                      setSenha({ ...senha, senhaAtual: e.target.value })
+                    }
+                    className="border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm text-neutral-500/80">
+                    NOVA SENHA
+                  </span>
+                  <input
+                    type="password"
+                    name="novaSenha"
+                    id="novaSenha"
+                    placeholder="Digite sua nova senha"
+                    required
+                    onChange={(e) =>
+                      setSenha({ ...senha, senha: e.target.value })
+                    }
+                    className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${senhasIguais === false || camposInvalidos.senha ? "border-red-700" : ""}`}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm text-neutral-500/80">
+                    CONFIRMAR SENHA
+                  </span>
+                  <input
+                    type="password"
+                    name="confirmarSenha"
+                    id="confirmarSenha"
+                    placeholder="Confirme a nova senha"
+                    required
+                    onChange={(e) =>
+                      setSenha({ ...senha, confirmarSenha: e.target.value })
+                    }
+                    className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${senhasIguais === false || camposInvalidos.senha ? "border-red-700" : ""}`}
+                  />
+                </div>
+                <p className="text-[11px] leading-tight text-neutral-500 self-center">
+                  Use 8+ caracteres incluindo maiúscula, <br />
+                  minúscula, número e símbolo.
+                </p>
+              </div>
+            )}
           </div>
-          <div className="flex flex-col gap-6 justify-between">
+
+          <button
+            className="text-sm text-neutral-700 hover:text-black cursor-pointer hover:underline transition"
+            onClick={(e) => {
+              e.preventDefault();
+              setEditarSenha(!editarSenha);
+              setSenha({
+                senha: "",
+                senhaAtual: "",
+                confirmarSenha: "",
+              });
+            }}
+          >
+            {editarSenha ? "Cancelar alteração de senha" : "Alterar senha"}
+          </button>
+          <div className="flex flex-col gap-6 max-w-125 justify-between self-center">
             <input
               type="submit"
               value={updateLoading ? "Salvando..." : "Salvar"}

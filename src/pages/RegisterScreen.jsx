@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { apiPublic } from "../services/api";
 import { useState } from "react";
 import { formatarCpf, formatarTelefone } from "../utils/formatters";
@@ -25,7 +25,7 @@ function RegisterScreen() {
   async function registrar(e) {
     e.preventDefault();
     setLoading(true);
-    console.log(usuarioForm.cpf);
+
     try {
       if (tipo === "Cliente") {
         await apiPublic.post("/api/v1/clientes", usuarioForm, {
@@ -72,7 +72,7 @@ function RegisterScreen() {
     );
   } else {
     campos = (
-      <div className="w-full flex flex-col gap-6">
+      <div className="w-full flex flex-col gap-5">
         <input
           type="text"
           placeholder="Crm"
@@ -118,6 +118,30 @@ function RegisterScreen() {
           className="flex flex-col gap-5 w-1/2 self-center"
         >
           <input
+            type="text"
+            placeholder="Nome"
+            onChange={(e) => {
+              setUsuarioForm({ ...usuarioForm, nome: e.target.value });
+              setCamposInvalidos({});
+            }}
+            className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.nome ? "border-red-700" : ""}`}
+          />
+
+          <input
+            type="text"
+            placeholder="Telefone"
+            onChange={(e) => {
+              const digitos = e.target.value.replace(/\D/g, "").slice(0, 11);
+              setUsuarioForm({ ...usuarioForm, telefone: digitos });
+              setCamposInvalidos({});
+            }}
+            value={formatarTelefone(usuarioForm.telefone)}
+            className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.telefone ? "border-red-700" : ""}`}
+          />
+
+          {campos}
+
+          <input
             type="email"
             name="email"
             id="email"
@@ -149,35 +173,17 @@ function RegisterScreen() {
           </div>
 
           <input
-            type="text"
-            placeholder="Nome"
-            onChange={(e) => {
-              setUsuarioForm({ ...usuarioForm, nome: e.target.value });
-              setCamposInvalidos({});
-            }}
-            className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.nome ? "border-red-700" : ""}`}
-          />
-
-          <input
-            type="text"
-            placeholder="Telefone"
-            onChange={(e) => {
-              const digitos = e.target.value.replace(/\D/g, "").slice(0, 11);
-              setUsuarioForm({ ...usuarioForm, telefone: digitos });
-              setCamposInvalidos({});
-            }}
-            value={formatarTelefone(usuarioForm.telefone)}
-            className={`border border-neutral-400 rounded-lg bg-neutral-100 focus:bg-white transition px-2 py-1 ${camposInvalidos.telefone ? "border-red-700" : ""}`}
-          />
-
-          {campos}
-
-          <input
             type="submit"
             value={loading ? "Criando..." : "Criar"}
             disabled={loading}
-            className="bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 w-40 mt-2 shadow-lg shadow-neutral-500"
+            className="bg-neutral-950 cursor-pointer self-center hover:bg-neutral-900 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 text-neutral-300 rounded-md p-1 w-40 mt-2 shadow-md shadow-neutral-500"
           />
+          <Link
+            className="text-sm text-neutral-700 hover:text-black cursor-pointer hover:underline transition self-center"
+            to="/login"
+          >
+            Cancelar
+          </Link>
         </form>
       </div>
     </div>

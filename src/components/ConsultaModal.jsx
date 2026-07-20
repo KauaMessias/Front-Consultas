@@ -22,13 +22,13 @@ function ConsultaModal({
   async function buscarUsuarioRelacionado() {
     if (isMedico) {
       const clienteApi = await apiPrivate.get(
-        `api/v1/clientes/${consulta.clienteId}`,
+        `/api/v1/clientes/${consulta.clienteId}`,
       );
 
       setUsuarioRelacionado(clienteApi.data);
     } else {
       const medicoApi = await apiPrivate.get(
-        `api/v1/medicos/${consulta.medicoId}`,
+        `/api/v1/medicos/${consulta.medicoId}`,
       );
       setUsuarioRelacionado(medicoApi.data);
       setEndereco(medicoApi.data.enderecoPrincipal);

@@ -96,7 +96,7 @@ function HorariosMedico({ medico, onClose }) {
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="fixed w-fit h-fit rounded-2xl bg-neutral-200 flex flex-col p-4 items-center shadow-lg "
+        className="w-fit h-fit rounded-2xl bg-neutral-200 flex flex-col p-4 items-center shadow-lg "
       >
         <header className="flex justify-end text-3xl w-full">
           <button
